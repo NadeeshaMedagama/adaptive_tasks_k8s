@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.taskmanager</groupId>
+    <groupId>io.github.nadeeshamedagama</groupId>
     <artifactId>task-management-backend</artifactId>
     <version>${revision}</version>
     <name>task-management-backend</name>
