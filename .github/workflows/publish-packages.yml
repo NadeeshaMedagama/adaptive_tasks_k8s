@@ -20,6 +20,9 @@ on:
 env:
   DOCKERHUB_BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/task-management-backend
   DOCKERHUB_FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/task-management-frontend
+  MAVEN_ARTIFACT_ID: task-management-backend
+  MAVEN_GROUP_PATH: io/github/nadeeshamedagama
+  MAVEN_PACKAGE_NAME: io.github.nadeeshamedagama.task-management-backend
 
 jobs:
   # ── Publish Maven Package ─────────────────────────────────────────────────
@@ -74,7 +77,7 @@ jobs:
       - name: Check package linkage
         uses: actions/github-script@v8
         env:
-          PACKAGE_NAME: com.taskmanager.task-management-backend
+          PACKAGE_NAME: ${{ env.MAVEN_PACKAGE_NAME }}
         with:
           script: |
             const packageName = process.env.PACKAGE_NAME;
@@ -113,7 +116,7 @@ jobs:
         id: version_check
         run: |
           VERSION="${{ steps.version.outputs.maven_version }}"
-          METADATA_URL="https://maven.pkg.github.com/${{ steps.version.outputs.repo_path }}/com/taskmanager/task-management-backend/maven-metadata.xml"
+          METADATA_URL="https://maven.pkg.github.com/${{ steps.version.outputs.repo_path }}/${{ env.MAVEN_GROUP_PATH }}/${{ env.MAVEN_ARTIFACT_ID }}/maven-metadata.xml"
           METADATA=$(curl -fsSL -u "$GITHUB_ACTOR:$GITHUB_TOKEN" "$METADATA_URL" || true)
 
           if echo "$METADATA" | grep -q "<version>${VERSION}</version>"; then
