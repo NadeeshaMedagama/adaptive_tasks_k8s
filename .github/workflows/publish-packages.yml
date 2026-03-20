@@ -27,7 +27,7 @@ jobs:
     name: Publish — Maven to GitHub Packages
     runs-on: ubuntu-latest
     concurrency:
-      group: maven-publish-${{ github.ref_name || github.run_id }}
+      group: maven-publish-${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.version || github.ref_name || github.run_id }}
       cancel-in-progress: false
     permissions:
       contents: read
@@ -68,11 +68,29 @@ jobs:
 
           echo "maven_version=$MAVEN_VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Check if Maven version already exists
+        id: version_check
+        run: |
+          VERSION="${{ steps.version.outputs.maven_version }}"
+          POM_URL="https://maven.pkg.github.com/${{ github.repository }}/com/taskmanager/task-management-backend/${VERSION}/task-management-backend-${VERSION}.pom"
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$GITHUB_ACTOR:$GITHUB_TOKEN" "$POM_URL")
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Package version ${VERSION} already exists. Skipping Maven deploy."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to GitHub Packages
+        if: steps.version_check.outputs.exists != 'true'
         run: >
           mvn clean deploy -DskipTests -B
           -Drevision=${{ steps.version.outputs.maven_version }}
-          -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}
+          -DaltDeploymentRepository=github::https://maven.pkg.github.com/${{ github.repository }}
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
