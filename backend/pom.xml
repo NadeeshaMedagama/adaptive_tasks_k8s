@@ -13,11 +13,12 @@
 
     <groupId>com.taskmanager</groupId>
     <artifactId>task-management-backend</artifactId>
-    <version>1.0.0</version>
+    <version>${revision}</version>
     <name>task-management-backend</name>
     <description>Mini Task Management System - Spring Boot Backend</description>
 
     <properties>
+        <revision>1.0.0-SNAPSHOT</revision>
         <java.version>21</java.version>
         <jjwt.version>0.11.5</jjwt.version>
     </properties>
