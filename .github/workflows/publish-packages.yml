@@ -26,6 +26,9 @@ jobs:
   publish-maven:
     name: Publish — Maven to GitHub Packages
     runs-on: ubuntu-latest
+    concurrency:
+      group: maven-publish-${{ github.ref_name || github.run_id }}
+      cancel-in-progress: false
     permissions:
       contents: read
       packages: write
@@ -47,15 +50,32 @@ jobs:
           server-username: GITHUB_ACTOR
           server-password: GITHUB_TOKEN
 
-      - name: Build with Maven
-        run: mvn clean package -DskipTests -B
+      - name: Determine publish version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            RAW_VERSION="${{ github.event.release.tag_name }}"
+          else
+            RAW_VERSION="${{ github.event.inputs.version }}"
+          fi
+
+          MAVEN_VERSION="${RAW_VERSION#v}"
+
+          if [ -z "$MAVEN_VERSION" ]; then
+            echo "Resolved Maven version is empty"
+            exit 1
+          fi
+
+          echo "maven_version=$MAVEN_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Publish to GitHub Packages
-        run: mvn deploy -DskipTests -B
+        run: >
+          mvn clean deploy -DskipTests -B
+          -Drevision=${{ steps.version.outputs.maven_version }}
+          -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
 
   # ── Publish Backend Docker Image to Docker Hub ─────────────────────────────
   publish-docker-backend:
