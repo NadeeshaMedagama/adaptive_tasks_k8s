@@ -5,7 +5,7 @@
 # Can be published to the GitHub Marketplace for reuse.
 # ============================================================================
 
-name: "Task Management Platform Deploy"
+name: "Adaptive Tasks K8s"
 description: "Deploy the Task Management Platform (Spring Boot + Next.js + PostgreSQL) using Docker Compose"
 author: "nadeesha_medagama"
 
