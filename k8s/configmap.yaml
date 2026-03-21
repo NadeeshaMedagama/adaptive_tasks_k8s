@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: task-manager-config
+  namespace: task-manager
+
+data:
+  NEXT_PUBLIC_API_URL: "http://taskmanager.local/api"
+  JWT_EXPIRATION: "86400000"
+  SPRING_DATASOURCE_USERNAME: "taskuser"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/taskmanager"
