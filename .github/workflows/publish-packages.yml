@@ -75,7 +75,7 @@ jobs:
           echo "repo_path=$REPO_PATH_LOWER" >> "$GITHUB_OUTPUT"
 
       - name: Check package linkage
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           PACKAGE_NAME: ${{ env.MAVEN_PACKAGE_NAME }}
         with:
