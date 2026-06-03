@@ -9,13 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "16.2.6",
+    "next": "16.2.7",
     "react": "^19",
     "react-dom": "^19",
     "axios": "^1.16.1",
     "react-hot-toast": "^2.4.1",
-    "lucide-react": "^1.17.0",
-    "date-fns": "^4.3.0",
+    "lucide-react": "^1.16.0",
+    "date-fns": "^4.4.0",
     "@headlessui/react": "^2.2.10"
   },
   "devDependencies": {
@@ -27,7 +27,7 @@
     "postcss": "^8",
     "autoprefixer": "^10.5.0",
     "eslint": "^10",
-    "eslint-config-next": "16.2.6"
+    "eslint-config-next": "16.2.7"
   }
 }
 
